@@ -1,0 +1,1 @@
+Simple python app that gets mushroom data from http://mushroom.world and writes it to a CSV file.
