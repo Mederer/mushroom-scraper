@@ -3,20 +3,16 @@ from models.mushroom import Mushroom
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_mushrooms(completion_callback=None):
     html_doc = requests.get("http://mushroom.world/mushrooms/namelist")
     soup = BeautifulSoup(html_doc.text, 'html.parser')
     links = []
     mushrooms = []
-    # counter = 1
 
     for link in soup.find_all('a'):
         if "/show" in link.get('href'):
             links.append("http://mushroom.world" + link.get('href'))
-
-            # counter += 1
-            # if counter == 10:
-            #     break
 
     for link in links:
         mushroom_doc = requests.get(link)
@@ -29,10 +25,10 @@ def get_mushrooms(completion_callback=None):
         dimensions = None
         edibility = None
         description = None
-        images = []
 
         try:
-            common_name = mushroom_soup.find("span", {"class": "mush-commonname"}).text[1:-1].rstrip()
+            common_name = mushroom_soup.find(
+                "span", {"class": "mush-commonname"}).text[1:-1].rstrip()
         except:
             common_name = "None"
 
@@ -42,18 +38,19 @@ def get_mushrooms(completion_callback=None):
         except:
             name = "None"
 
-        divs = mushroom_soup.find("main").find_all("div", {"class": "mush-info"})
+        divs = mushroom_soup.find("main").find_all(
+            "div", {"class": "mush-info"})
 
         try:
             family = divs[0].find("div", {"class": "mush-textus"}).text
         except:
             family = "None"
-        
+
         try:
             location = divs[1].find("div", {"class": "mush-textus"}).text
         except:
             location = "None"
-        
+
         try:
             dimensions = divs[2].find("div", {"class": "mush-textus"}).text
         except:
@@ -62,10 +59,11 @@ def get_mushrooms(completion_callback=None):
         try:
             edibility = divs[3].find("div", {"class": "mush-textus"}).text
         except:
-           edibility = "None" 
+            edibility = "None"
 
         try:
-            description_raw = divs[4].find("div", {"class": "mush-longtextus"}).text
+            description_raw = divs[4].find(
+                "div", {"class": "mush-longtextus"}).text
             description = remove_html_tags(description_raw)
         except:
             description = "None"
@@ -77,8 +75,8 @@ def get_mushrooms(completion_callback=None):
         except:
             images = []
 
-        
-        mushroom = Mushroom(name, common_name, family.rstrip(), location.rstrip(), dimensions.rstrip(), edibility.rstrip(), description.rstrip())
+        mushroom = Mushroom(name, common_name, family.rstrip(), location.rstrip(
+        ), dimensions.rstrip(), edibility.rstrip(), description.rstrip())
         mushroom.set_image_urls(images)
         mushrooms.append(mushroom)
 
